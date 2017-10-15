@@ -1,4 +1,3 @@
-
 obstacle=zeros(1,3,4);
 obstacle(1,:,1)=[60,-300,170];
 obstacle(1,:,2)=[60,100,150];
@@ -8,11 +7,11 @@ xw=100;
 yw=100;
 th1 = atan(yw/xw);
 T = [0 cos(th1) sin(th1) xw/25.4;0 -sin(th1) cos(th1) yw/25.4; 1 0 0 150/25.4;0 0 0 1]; %Unreachable
- [q,T]=IK_lynx(T);
- lynxServo(q);
+[q,T]=IK_lynx(T);
+lynxServo(q);
  
  
- function F=collchecksphere(x,y,z)
+ F=collchecksphere(x,y,z);
  F=1;
  if((square(x-60)+square(y+300)+square(z-170))<64 || (square(x-60)+square(y-100)+square(z-150))<64 || (square(x-210)+square(y+200)+square(z-120))<64 || (square(x-210)+square(y-100)+square(z-150))<64)
  flag=0;
@@ -50,5 +49,3 @@ T = [0 cos(th1) sin(th1) xw/25.4;0 -sin(th1) cos(th1) yw/25.4; 1 0 0 150/25.4;0 
 % [q,T]=IK_lynx(T);
 % lynxServo(q);
 %home T = [0 0 1 292.10/25.4;0 1 0 0; 1 0 0 222.25/25.4;0 0 0 1]; %Unreachable
-
-

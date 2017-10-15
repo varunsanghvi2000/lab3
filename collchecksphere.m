@@ -23,7 +23,6 @@ Y_2=zeros(1,(15.^2)*(18.^2)*16);
 Z_2=zeros(1,(15.^2)*(18.^2)*16);
 
 %% Calculation of free c-space of robot
-%cspace = zeros();
 pospoint=zeros(3,1);
 count_in = 1;
 count_in2 = 1;
@@ -48,7 +47,6 @@ for i=-1.4:0.4:1.4
                         count_in=count_in+1;
                         posp=[X(6,1);X(6,2);X(6,3)];
                         pospoint=horzcat(pospoint,posp);
-                        %cspace=horzcat(cspace,q);
                     else
                         X_2(1,count_in2)=X(6,1);
                         Y_2(1,count_in2)=X(6,2);
@@ -68,11 +66,8 @@ scatter3(X_2,Y_2,Z_2,2,...
     'MarkerFaceColor',[0 .75 .75]);
 
 %% Call lynxplanner to find path using RRTs
-% Generate random points in 3D c-space - USE THE CLOSEST POINT IN C-SPACE
+% Generate random points in 3D c-space
 random_pts=datasample(pospoint.',200);
-
-% Check if random points are in collision with obstacles using sperecol
-% random_pts = spherecol(random_pts);
 
 % Send random points to lynxPlanner
 [path is_possible] = lynxPlanner(random_points, qstart, qend);
@@ -129,7 +124,7 @@ for i = 1:1:length(random_pts)
             qa = newqa;
         end
         iter = iter + 1;
-        % For too many itierations, stop computation
+        % For too many iterations, stop computation
         if iter > 500
             is_possible = 0;
         end

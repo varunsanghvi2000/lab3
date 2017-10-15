@@ -43,4 +43,3 @@ function [ ] = lynxServoSim( th1, th2, th3, th4, th5, th6)
     plotrobot(lynx, q, skipFrame);
        
 end
-
