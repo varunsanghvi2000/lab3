@@ -69,7 +69,7 @@ scatter3(X_2,Y_2,Z_2,2,...
 
 %% Call lynxplanner to find path using RRTs
 % Generate random points in 3D c-space - USE THE CLOSEST POINT IN C-SPACE
-random_pts=datasample(pospoint.',200);
+random_pts=datasample(pospoint.,200);
 
 % Check if random points are in collision with obstacles using sperecol
 % random_pts = spherecol(random_pts);
