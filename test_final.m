@@ -32,12 +32,15 @@ function [qstarttree,qendtree]=addpointtolist(qstarttree,qendtree,q)
 
 dist_index1=zeros(lenqst,2);
 dist_index2=zeros(lenen,2);
+flag_st_total=1;
+flag_et_total=1;
 for n=1:lenqst
     qintstart=qstarttree(n,:);
     flagstart=checklinecol(qintstart,q);
     if flagstart==0
     dist=distcheck(qintstart,q);
     dist_index1=vertcat(dist_index1,[dist,n]);
+    flag_st_total=0;
     end
 end
 dist1 = sortrows(dist_index1);
@@ -47,16 +50,24 @@ for n=1:lenen
     if flagend==0
     dist=distcheck(qintend,q);
     dist_index2=vertcat(dist_index2,[dist,n]);
+    flag_et_total=0;
     end
 end
 dist2 = sortrows(dist_index2);
-if dist1(2,1)<dist2(2,1)
-    qendtree=vertcat(qendtree,q);
-    %add edge
-else
+if flag_st_total==0 && flag_et_total==0
+    %pathfound
+elseif flag_st_total==0
     qstarttree=vertcat(qstarttree,q);
-    %add edge
+elseif flag_et_total==0
+    qstarttree=vertcat(qendtree,q);
 end
+% % if dist1(2,1)
+% %     qendtree=vertcat(qendtree,q);
+% %     %add edge
+% % else
+% %     qstarttree=vertcat(qstarttree,q);
+% %     %add edge
+% % end
     
 
 % % flag=checklinecol(qendtree,q);
