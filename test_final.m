@@ -5,10 +5,19 @@ pathplan(qstart,qsend);
 function pathplan(qstart,qend)
 qstarttree =qstart;
 qendtree=qend;
+qstart_edge_tree=zeros(1,2);
+qend_edge_tree=zeros(1,2);
 pathcheck=checklinecol(qstarttree,qendtree);
+pathfound=0;
 if pathcheck == 1           %colides
+  while pathfound ~=1
    q=randomq();
-   addpointtolist(qstarttree,qendtree,q)
+   [qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,pathfound]=addpointtolist(qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,q);
+   qstart_edge_tree
+   qend_edge_tree
+   %fprintf('test');
+  end
+  fprintf('path_found');
 else
     lynxServo(qstart);
     
@@ -23,13 +32,13 @@ q2=-1.4+(1.4+1.4)*rand;
 q3=-1.4+(1.4+1.4)*rand;
 q4=-1.4+(1.4+1.4)*rand;
 q5=-1.4+(1.4+1.4)*rand;
-q=[q1,q2,q3,q4,q5];
+q=[q1,q2,q3,q4,q5,10];
 end
 
-function [qstarttree,qendtree]=addpointtolist(qstarttree,qendtree,q)
+function [qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,pathfound]=addpointtolist(qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,q)
 [lenqst mstrt]=size(qstarttree);
 [lenen mend]=size(qendtree);
-
+pathfound=0;
 dist_index1=zeros(lenqst,2);
 dist_index2=zeros(lenen,2);
 flag_st_total=1;
@@ -55,11 +64,21 @@ for n=1:lenen
 end
 dist2 = sortrows(dist_index2);
 if flag_st_total==0 && flag_et_total==0
-    %pathfound
+    qstarttree=vertcat(qstarttree,q);
+    [lenqst mstrt]=size(qstarttree);
+    qstart_edge_tree=vertcat(qstart_edge_tree,[lenqst,dist1(2,2)]);
+    qendtree=vertcat(qendtree,q);
+    [lenen mend]=size(qendtree);
+    qend_edge_tree=vertcat(qend_edge_tree,[lenen,dist2(2,2)]);
+    pathfound=1;
 elseif flag_st_total==0
     qstarttree=vertcat(qstarttree,q);
+    [lenqst mstrt]=size(qstarttree);
+    qstart_edge_tree=vertcat(qstart_edge_tree,[lenqst,dist1(2,2)]);
 elseif flag_et_total==0
-    qstarttree=vertcat(qendtree,q);
+    qendtree=vertcat(qendtree,q);
+    [lenen mend]=size(qendtree);
+    qend_edge_tree=vertcat(qend_edge_tree,[lenen,dist2(2,2)]);
 end
 % % if dist1(2,1)
 % %     qendtree=vertcat(qendtree,q);
