@@ -10,17 +10,49 @@ qend_edge_tree=zeros(1,2);
 pathcheck=checklinecol(qstarttree,qendtree);
 pathfound=0;
 if pathcheck == 1           %colides
-  while pathfound ~=1
-   q=randomq();
-   [qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,pathfound]=addpointtolist(qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,q);
-   qstart_edge_tree
-   qend_edge_tree
-   %fprintf('test');
-  end
-  fprintf('path_found');
+    
+    while pathfound ~=1          %or no of ittrations reached
+        q=randomq();
+        [qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,pathfound]=addpointtolist(qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,q);
+        
+        
+        %fprintf('test');
+    end
+    secondval=0;
+    [index,w]=size(qstart_edge_tree);
+    pathforward=zeros(1,6);
+    while secondval~=1
+        firstval=qstart_edge_tree(index,1);
+        secondval=qstart_edge_tree(index,2);
+        pathforward=vertcat(pathforward,qstarttree(firstval,:));
+        index=qstart_edge_tree(firstval,2);
+    end
+    
+    %reversepath
+   
+    secondvalrev=0;
+    [indexrev,w]=size(qend_edge_tree);
+    pathrev=zeros(1,6);
+    while secondvalrev~=1
+        firstvalrev=qstart_edge_tree(indexrev,1);
+        secondvalrev=qstart_edge_tree(indexrev,2);
+        pathrev=vertcat(pathrev,qendtree(firstvalrev,:));
+        indexrev=qstart_edge_tree(firstvalrev,2);
+    end
+    pathforward=pathforward(2:end,:)
+    pathrev=pathforward(2)
+    
+    
+    
+    pathforward
+    pathrev
+    qstart_edge_tree;
+    qend_edge_tree;
+    qstarttree(end,:);
+    qendtree(end,:);
+    fprintf('path_found');
 else
     lynxServo(qstart);
-    
     lynxServo(qend);
 end
 
@@ -47,9 +79,9 @@ for n=1:lenqst
     qintstart=qstarttree(n,:);
     flagstart=checklinecol(qintstart,q);
     if flagstart==0
-    dist=distcheck(qintstart,q);
-    dist_index1=vertcat(dist_index1,[dist,n]);
-    flag_st_total=0;
+        dist=distcheck(qintstart,q);
+        dist_index1=vertcat(dist_index1,[dist,n]);
+        flag_st_total=0;
     end
 end
 dist1 = sortrows(dist_index1);
@@ -57,9 +89,9 @@ for n=1:lenen
     qintend=qendtree(n,:);
     flagend=checklinecol(qintend,q);
     if flagend==0
-    dist=distcheck(qintend,q);
-    dist_index2=vertcat(dist_index2,[dist,n]);
-    flag_et_total=0;
+        dist=distcheck(qintend,q);
+        dist_index2=vertcat(dist_index2,[dist,n]);
+        flag_et_total=0;
     end
 end
 dist2 = sortrows(dist_index2);
@@ -87,7 +119,7 @@ end
 % %     qstarttree=vertcat(qstarttree,q);
 % %     %add edge
 % % end
-    
+
 
 % % flag=checklinecol(qendtree,q);
 % % for n=1:len
@@ -117,31 +149,34 @@ stepq2=linspace(q1(2),q2(2),discretization);
 stepq3=linspace(q1(3),q2(3),discretization);
 stepq4=linspace(q1(4),q2(4),discretization);
 stepq5=linspace(q1(5),q2(5),discretization);
-    for n=1:discretization
-        flageachpoint=0;
-        q=[stepq1(n),stepq2(n),stepq3(n),stepq4(n),stepq5(n),10];
-        X=updateQ(q);
-        xdesclink1=linspace(X(2,1),X(3,1),linkdiscretization);
-        ydesclink1=linspace(X(2,2),X(3,2),linkdiscretization);
-        zdesclink1=linspace(X(2,3),X(3,3),linkdiscretization);
-        link1mat=[xdesclink1',ydesclink1',zdesclink1'];
-        xdesclink2=linspace(X(3,1),X(4,1),linkdiscretization);
-        ydesclink2=linspace(X(3,2),X(4,2),linkdiscretization);
-        zdesclink2=linspace(X(3,3),X(4,3),linkdiscretization);
-
-%                     totalFlag=0;
-                    for np=1:6
-                        F=spherecol(X(np,:));
-                        if(F==1)
-                            totalFlag=1;
-                        end
-                    end
-                    if(totalFlag==1)
-                            flageachpoint=1;
-                            break;
-                    end
+for n=1:discretization
+    flageachpoint=0;
+    q=[stepq1(n),stepq2(n),stepq3(n),stepq4(n),stepq5(n),10];
+    X=updateQ(q);
+    xdesclink1=linspace(X(2,1),X(3,1),linkdiscretization);
+    ydesclink1=linspace(X(2,2),X(3,2),linkdiscretization);
+    zdesclink1=linspace(X(2,3),X(3,3),linkdiscretization);
+    link1mat1=[xdesclink1',ydesclink1',zdesclink1'];
+    xdesclink2=linspace(X(3,1),X(4,1),linkdiscretization);
+    ydesclink2=linspace(X(3,2),X(4,2),linkdiscretization);
+    zdesclink2=linspace(X(3,3),X(4,3),linkdiscretization);
+    link1mat2=[xdesclink2',ydesclink2',zdesclink2'];
+    X=vertcat(X,link1mat1);
+    X=vertcat(X,link1mat2);
+    [len wid]=size(X);
+    totalFlag=0;
+    for np=1:len
+        F=spherecol(X(np,:));
+        if(F==1)
+            totalFlag=1;
+        end
     end
-    flag=flageachpoint;
+    if(totalFlag==1)
+        flageachpoint=1;
+        break;
+    end
+end
+flag=flageachpoint;
 end
 
 function F=spherecol(coodr)

@@ -2,7 +2,7 @@ qstart=[0,0,0,0,0,10];
 qsend=[1.4,0,0,0,0,10];
 pathplan(qstart,qsend);
 
-function pathplan(qstart,qend)
+function total_path=pathplan(qstart,qend)
 qstarttree =qstart;
 qendtree=qend;
 qstart_edge_tree=zeros(1,2);
@@ -18,15 +18,44 @@ if pathcheck == 1           %colides
         
         %fprintf('test');
     end
-    qstart_edge_tree
-    qend_edge_tree
-    qstarttree(end,:)
-    qendtree(end,:)
+    secondval=0;
+    [index,w]=size(qstart_edge_tree);
+    pathforward=zeros(1,6);
+    while secondval~=1
+        firstval=qstart_edge_tree(index,1);
+        secondval=qstart_edge_tree(index,2);
+        pathforward=vertcat(pathforward,qstarttree(firstval,:));
+        index=qstart_edge_tree(firstval,2);
+    end
+    pathforward=vertcat(pathforward,qstart)
+    %reversepath
+   
+    secondvalrev=0;
+    [indexrev,w]=size(qend_edge_tree);
+    pathrev=zeros(1,6);
+    while secondvalrev~=1
+        firstvalrev=qstart_edge_tree(indexrev,1);
+        secondvalrev=qstart_edge_tree(indexrev,2);
+        pathrev=vertcat(pathrev,qendtree(firstvalrev,:));
+        indexrev=qstart_edge_tree(firstvalrev,2);
+    end
+    pathrev=vertcat(pathrev,qend);
+    
+    pathforward=pathforward(2:end,:);
+    pathrev=pathrev(3:end,:);
+    
+    
+    
+    pathforward=flipud(pathforward);
+    total_path=vertcat(pathforward,pathrev);
+% % %     pathrev
+% % %     qstart_edge_tree;
+% % %     qend_edge_tree;
+% % %     qstarttree(end,:);
+% % %     qendtree(end,:);
     fprintf('path_found');
 else
-    lynxServo(qstart);
-    
-    lynxServo(qend);
+    total_path=vertcat(qstart,qend);
 end
 
 end
