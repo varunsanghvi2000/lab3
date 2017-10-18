@@ -1,6 +1,13 @@
 qstart=[0,0,0,0,0,10];
-qsend=[1.4,0,0,0,0,10];
-pathplan(qstart,qsend);
+qsend=[1.4,0,0.5,0,0,10];
+total_path = pathplan(qstart,qsend);
+[nop v]=size(total_path);
+for i=1:nop
+    q = total_path(i,:);
+    lynxServo(q)
+    hold on;
+    %pause(10)
+end
 
 function total_path=pathplan(qstart,qend)
 qstarttree =qstart;
@@ -9,14 +16,14 @@ qstart_edge_tree=zeros(1,2);
 qend_edge_tree=zeros(1,2);
 pathcheck=checklinecol(qstarttree,qendtree);
 pathfound=0;
+ittration=0;
+noittration=10000;
 if pathcheck == 1           %colides
     
-    while pathfound ~=1          %or no of ittrations reached
+    while pathfound ~=1 && ittration<noittration
         q=randomq();
         [qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,pathfound]=addpointtolist(qstarttree,qendtree,qstart_edge_tree,qend_edge_tree,q);
-        
-        
-        %fprintf('test');
+        ittration=ittration+1;
     end
     secondval=0;
     [index,w]=size(qstart_edge_tree);
@@ -27,7 +34,7 @@ if pathcheck == 1           %colides
         pathforward=vertcat(pathforward,qstarttree(firstval,:));
         index=qstart_edge_tree(firstval,2);
     end
-    pathforward=vertcat(pathforward,qstart)
+    pathforward=vertcat(pathforward,qstart);
     %reversepath
    
     secondvalrev=0;
@@ -47,7 +54,7 @@ if pathcheck == 1           %colides
     
     
     pathforward=flipud(pathforward);
-    total_path=vertcat(pathforward,pathrev);
+    total_path=vertcat(pathforward,pathrev)
 % % %     pathrev
 % % %     qstart_edge_tree;
 % % %     qend_edge_tree;
@@ -60,12 +67,16 @@ end
 
 end
 
+% Check that angular limits are satisfied
+    %lowerLim = [-1.4 -1.2 -1.8 -1.9 -2 -15]; % Lower joint limits in radians (grip in inches)
+    %upperLim = [1.4 1.4 1.7 1.7 1.5 30]; % Upper joint limits in radians (grip in inches)
+    
 function q=randomq()
 q1=-1.4+(1.4+1.4)*rand;
-q2=-1.4+(1.4+1.4)*rand;
-q3=-1.4+(1.4+1.4)*rand;
-q4=-1.4+(1.4+1.4)*rand;
-q5=-1.4+(1.4+1.4)*rand;
+q2=-1.2+(1.4+1.2)*rand;
+q3=-1.8+(1.7+1.8)*rand;
+q4=-1.9+(1.7+1.9)*rand;
+q5=-2+(1.5+2)*rand;
 q=[q1,q2,q3,q4,q5,10];
 end
 

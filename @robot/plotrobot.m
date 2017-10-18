@@ -309,6 +309,19 @@ surface(r*xc+210,r*yc-200,r*zc+120);
 %obstacle(1 : 4)=[21,10,25];
 surface(r*xc+210,r*yc+100,r*zc+250);
 
+%plot obsta
+[xc, yc, zc] = sphere(20);
+r=20;
+%obstacle(1 : 1)=[6,-30,17];
+surface(r*xc+60,r*yc-300,r*zc+170);
+%obstacle(1 : 2)=[6,10,15];
+surface(r*xc+60,r*yc+100,r*zc+150);
+%obstacle(1 : 3)=[21,-20,12];
+surface(r*xc+210,r*yc-200,r*zc+120);
+%obstacle(1 : 4)=[21,10,25];
+surface(r*xc+210,r*yc+100,r*zc+250);
+
+
 
 
 %
