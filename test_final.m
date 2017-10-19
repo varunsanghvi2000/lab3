@@ -1,5 +1,14 @@
-qstart=[0,0,0,0,0,10];
-qsend=[1.4,0,0.5,0,0,10];
+%Tstart=[enter value of t for start point];
+%Tend=[enter value of t for end point];
+% qstart=IK_lynx(Tstart);
+% qsend=IK_lynx(Tend);
+
+qstart=[0.6,1,0,0,0,10];
+qsend=[1.4,1,0.5,0,0,10];
+
+fl1=checkpointforcol(qstart);
+fl2=checkpointforcol(qsend);
+if fl1==0 && fl2==0
 total_path = pathplan(qstart,qsend);
 [nop v]=size(total_path);
 for i=1:nop
@@ -8,7 +17,9 @@ for i=1:nop
     hold on;
     %pause(10)
 end
-
+else
+    fprintf('invalid points');
+end
 function total_path=pathplan(qstart,qend)
 qstarttree =qstart;
 qendtree=qend;
@@ -155,7 +166,7 @@ end
 
 %if flag=0 no coll
 function flag=checklinecol(q1,q2)
-discretization=100;
+discretization=10;
 linkdiscretization=10;
 stepq1=linspace(q1(1),q2(1),discretization);
 stepq2=linspace(q1(2),q2(2),discretization);
@@ -192,9 +203,34 @@ end
 flag=flageachpoint;
 end
 
+%flag=0 if no coll
+function totalFlag=checkpointforcol(q)
+    linkdiscretization=10;
+    totalFlag=0;
+    X=updateQ(q);
+    xdesclink1=linspace(X(2,1),X(3,1),linkdiscretization);
+    ydesclink1=linspace(X(2,2),X(3,2),linkdiscretization);
+    zdesclink1=linspace(X(2,3),X(3,3),linkdiscretization);
+    link1mat1=[xdesclink1',ydesclink1',zdesclink1'];
+    xdesclink2=linspace(X(3,1),X(4,1),linkdiscretization);
+    ydesclink2=linspace(X(3,2),X(4,2),linkdiscretization);
+    zdesclink2=linspace(X(3,3),X(4,3),linkdiscretization);
+    link1mat2=[xdesclink2',ydesclink2',zdesclink2'];
+    X=vertcat(X,link1mat1);
+    X=vertcat(X,link1mat2);
+    [len wid]=size(X);
+    for np=1:len
+        F=spherecol(X(np,:));
+        if(F==1)
+            totalFlag=1;
+        end
+    end
+end
+
+
 function F=spherecol(coodr)
 sphere_size=40;
-cylinder_size=20;
+cylinder_size=10;
 x=coodr(1,1);
 y=coodr(1,2);
 z=coodr(1,3);
@@ -202,7 +238,7 @@ F=0;
 if(((x-60)^2+(y+300)^2+(z-170)^2)<sphere_size^2 || ((x-60)^2+(y-100)^2+(z-150)^2)<sphere_size^2 || ((x-210)^2+(y+200)^2+(z-120)^2)<sphere_size^2 || ((x-210)^2+(y-100)^2+(z-150)^2)<sphere_size^2)
     F=1;
 end
-if((((x-60)^2+(y+300)^2)<cylinder_size^2 && z>170) || (((x-60)^2+(y-100)^2)<cylinder_size^2 && z>150)|| (((x-210)^2+(y-200)^2)<cylinder_size^2 && z>120) || (((x-210)^2+(y-100)^2)<cylinder_size^2 && z>150))
+if (((((x-60)^2+(y+300)^2)<cylinder_size^2) && z>170) || ((((x-60)^2+(y-100)^2)<cylinder_size^2) && z>150)|| ((((x-210)^2+(y-200)^2)<cylinder_size^2) && z>120) || ((((x-210)^2+(y-100)^2)<cylinder_size^2) && z>150))
     F=1;
 end
 end
